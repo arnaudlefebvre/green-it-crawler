@@ -5,7 +5,9 @@
   "scripts": {
     "kpi": "node greenit-kpi-runner.js --config config.yml --out out",
     "kpi:session": "node greenit-kpi-runner.js --config config.yml --out out --persist-session",
-	"session:capture": "node capture-session.js --url https://services.integration.santeclair.fr/pu/mysanteclair --out out/auth/storageState.json --ignore-https-errors"
+    "kpi:modular": "node src/main.js --config config.yml --out out",
+    "kpi:modular:session": "node src/main.js --config config.yml --out out --persist-session",
+    "session:capture": "node capture-session.js --url https://services.integration.santeclair.fr/pu/mysanteclair --out out/auth/storageState.json --ignore-https-errors"
   },
   "devDependencies": {
     "playwright": "^1.47.2",
