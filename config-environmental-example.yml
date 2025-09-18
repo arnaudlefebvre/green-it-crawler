@@ -1,0 +1,52 @@
+# Configuration example with French environmental impact settings
+
+kpi:
+  # Weights for composite KPI calculation
+  weights:
+    # Traditional metrics (90% total)
+    requests: 0.35
+    transferKB: 0.20
+    domSize: 0.15
+    uniqueDomains: 0.08
+    compressedPct: 0.04
+    minifiedPct: 0.04
+    # Environmental impact (10% total) - NEW!
+    co2Impact: 0.04      # CO2 emissions (most important)
+    energyImpact: 0.03   # Energy consumption
+    waterImpact: 0.02    # Water consumption
+    dataImpact: 0.01     # Data transfer volume
+    # Other metrics (remaining weight)
+    inlineStyles: 0.02
+    inlineScripts: 0.02
+    # ... other weights remain the same
+
+  # Thresholds for scoring (French energy mix context)
+  thresholds:
+    # Environmental impact thresholds (French context - low carbon grid)
+    co2_g: [0.5, 1.0, 2.0, 4.0]           # gCO2eq per page load
+    energy_kWh: [0.0006, 0.0012, 0.0025, 0.005]  # kWh per page load
+    water_cl: [0.05, 0.1, 0.2, 0.4]       # cL (centiliters) per page load
+    dataGB: [0.0005, 0.001, 0.002, 0.004] # GB transferred per page load
+    
+    # Traditional thresholds remain the same
+    requests: [27, 50, 80, 120]
+    transferKB: [300, 800, 1500, 2500]
+    domSize: [800, 1500, 2500, 4000]
+    # ... other thresholds
+
+# French energy mix configuration (automatically applied)
+impact:
+  kWhPerGB: 0.81                    # Energy per GB of data transfer
+  gridIntensity_g_per_kWh: 79       # French grid: 79g CO2eq/kWh (2023)
+  waterIntensity_L_per_kWh: 0.8     # French grid: 0.8L/kWh (nuclear efficiency)
+
+# Example targets configuration
+targets:
+- product: "MySanteClair Web"
+  pages:
+  - name: "Accueil"
+    url: "https://services.integration.santeclair.fr/pu/public/accueil"
+    weight: 2  # Higher weight for important pages
+  - name: "Home"
+    url: "https://services.integration.santeclair.fr/pu/mysanteclair"
+    weight: 1

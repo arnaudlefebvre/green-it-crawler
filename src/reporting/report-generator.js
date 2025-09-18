@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { ensureDir, safeName, nowIso } from '../utils/file-helpers.js'
+import { gradeEnvironmentalImpact, getImpactStatus } from '../kpi/impact-estimator.js'
 
 function lowerBetterStatus(value, thr) {
   if (!Array.isArray(thr) || thr.length < 4) return { label: 'ℹ️ N/A', level: 'na' }
@@ -130,7 +131,7 @@ function whyAndHow(key) {
   return map[key] || { why: "", how: [] }
 }
 
-export function generateDetailedReport(outDir, meta, result, kpi, domInfo, responses, cfg) {
+export function generateDetailedReport(outDir, meta, result, kpi, domInfo, responses, cfg, impacts) {
   try {
     const kpiCfg = cfg.kpi || {}
     const T = kpiCfg.thresholds || {}
@@ -172,6 +173,20 @@ export function generateDetailedReport(outDir, meta, result, kpi, domInfo, respo
 **Date**: ${meta.timestamp}
 
 **KPI Composite**: **${result.kpiGrade} (${result.kpiScore})**
+
+## 🌱 Impact Environnemental (Mix énergétique français)
+${impacts ? `
+**Grade environnemental**: **${gradeEnvironmentalImpact(impacts, cfg.kpi?.thresholds)}**
+
+| Indicateur | Valeur | Statut | Équivalence |
+|---|---:|:--|:--|
+| CO₂ | ${impacts.co2_g} g | ${getImpactStatus(impacts.co2_g, cfg.kpi?.thresholds?.co2_g || [0.5, 1.0, 2.0, 4.0], 'co2').emoji} ${getImpactStatus(impacts.co2_g, cfg.kpi?.thresholds?.co2_g || [0.5, 1.0, 2.0, 4.0], 'co2').label} | ${(impacts.co2_g / 4.6 * 1000).toFixed(0)}m en voiture |
+| Énergie | ${impacts.energy_kWh} kWh | ${getImpactStatus(impacts.energy_kWh, cfg.kpi?.thresholds?.energy_kWh || [0.0006, 0.0012, 0.0025, 0.005], 'energy').emoji} ${getImpactStatus(impacts.energy_kWh, cfg.kpi?.thresholds?.energy_kWh || [0.0006, 0.0012, 0.0025, 0.005], 'energy').label} | ${(impacts.energy_kWh * 60).toFixed(1)}min d'ampoule LED |
+| Eau | ${impacts.water_cl} cL | ${getImpactStatus(impacts.water_cl, cfg.kpi?.thresholds?.water_cl || [0.05, 0.1, 0.2, 0.4], 'water').emoji} ${getImpactStatus(impacts.water_cl, cfg.kpi?.thresholds?.water_cl || [0.05, 0.1, 0.2, 0.4], 'water').label} | ${(impacts.water_cl / 25).toFixed(2)} verres d'eau |
+| Données | ${impacts.dataGB} GB | ${getImpactStatus(impacts.dataGB, cfg.kpi?.thresholds?.dataGB || [0.0005, 0.001, 0.002, 0.004], 'data').emoji} ${getImpactStatus(impacts.dataGB, cfg.kpi?.thresholds?.dataGB || [0.0005, 0.001, 0.002, 0.004], 'data').label} | ${(impacts.dataGB * 1024).toFixed(1)} MB transférés |
+
+> **Modèle**: ${impacts.model} - Mix énergétique français 2023 (79g CO₂/kWh)
+` : '_Données d\'impact non disponibles._'}
 
 `
 
@@ -256,7 +271,8 @@ ${(tips.how||[]).map(a=>`- ${a}`).join('\n')}`
       const calcKeys = [
         'requests','transferKB','domSize','uniqueDomains','compressedPct','minifiedPct','inlineStyles','inlineScripts',
         'cssFiles','jsFiles','resizedImages','hiddenDownloadedImages','belowFoldNoLazy','staticNoCache','staticWithCookies',
-        'imageLegacyPct','wastedImagePct','errors','redirects','cookieHeaderAvg','fontsExternal','hstsMissing'
+        'imageLegacyPct','wastedImagePct','errors','redirects','cookieHeaderAvg','fontsExternal','hstsMissing',
+        'co2Impact','energyImpact','waterImpact','dataImpact'
       ]
       const kpiDebug = (typeof kpi === 'object' && kpi && kpi.norms && kpi.effW) ? kpi : null
 
@@ -265,6 +281,10 @@ ${(tips.how||[]).map(a=>`- ${a}`).join('\n')}`
         const valOf = (key) => {
           if (key in result) return result[key]
           if (key === 'belowFoldNoLazy') return (domInfo.belowFoldNoLazyImages||0)+(domInfo.belowFoldNoLazyIframes||0)
+          if (key === 'co2Impact' && impacts) return `${impacts.co2_g}g CO₂`
+          if (key === 'energyImpact' && impacts) return `${impacts.energy_kWh}kWh`
+          if (key === 'waterImpact' && impacts) return `${impacts.water_cl}cL`
+          if (key === 'dataImpact' && impacts) return `${impacts.dataGB}GB`
           return ''
         }
         let sumContrib = 0

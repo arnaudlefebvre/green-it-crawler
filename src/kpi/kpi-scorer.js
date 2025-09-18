@@ -1,3 +1,5 @@
+import { scoreEnvironmentalImpact } from './impact-estimator.js'
+
 function normalizeLowerBetter(value, thresholds) {
   if (value <= thresholds[0]) return 100
   if (value <= thresholds[1]) return 75
@@ -45,21 +47,22 @@ function computeScoreCeiling(metrics, kpiCfg) {
   return max
 }
 
-export function computeCompositeKpi(metrics, kpiCfg) {
+export function computeCompositeKpi(metrics, kpiCfg, impacts = null) {
   const W = kpiCfg?.weights || {}
   const T = kpiCfg?.thresholds || {}
   
+  // Include environmental impact weights (default to 10% total)
   const weights = {
-    requests: W.requests ?? 0.40,
-    transferKB: W.transferKB ?? 0.25,
+    requests: W.requests ?? 0.35,
+    transferKB: W.transferKB ?? 0.20,
     domSize: W.domSize ?? 0.15,
-    uniqueDomains: W.uniqueDomains ?? 0.10,
-    compressedPct: W.compressedPct ?? 0.05,
-    minifiedPct: W.minifiedPct ?? 0.05,
+    uniqueDomains: W.uniqueDomains ?? 0.08,
+    compressedPct: W.compressedPct ?? 0.04,
+    minifiedPct: W.minifiedPct ?? 0.04,
     inlineStyles: W.inlineStyles ?? 0.02,
     inlineScripts: W.inlineScripts ?? 0.02,
-    cssFiles: W.cssFiles ?? 0.02,
-    jsFiles: W.jsFiles ?? 0.02,
+    cssFiles: W.cssFiles ?? 0.015,
+    jsFiles: W.jsFiles ?? 0.015,
     resizedImages: W.resizedImages ?? 0.01,
     hiddenDownloadedImages: W.hiddenDownloadedImages ?? 0.01,
     staticWithCookies: W.staticWithCookies ?? 0.01,
@@ -71,7 +74,12 @@ export function computeCompositeKpi(metrics, kpiCfg) {
     imageLegacyPct: W.imageLegacyPct ?? 0.01,
     wastedImagePct: W.wastedImagePct ?? 0.01,
     hstsMissing: W.hstsMissing ?? 0.01,
-    cookieHeaderAvg: W.cookieHeaderAvg ?? 0.01
+    cookieHeaderAvg: W.cookieHeaderAvg ?? 0.01,
+    // Environmental impact weights
+    co2Impact: W.co2Impact ?? 0.04,
+    energyImpact: W.energyImpact ?? 0.03,
+    waterImpact: W.waterImpact ?? 0.02,
+    dataImpact: W.dataImpact ?? 0.01
   }
   
   const _sumW = Object.values(weights).reduce((a,b)=>a + (typeof b === 'number' ? b : 0), 0) || 1
@@ -99,7 +107,12 @@ export function computeCompositeKpi(metrics, kpiCfg) {
     staticNoCache: T.staticNoCache ?? [0, 1, 3, 6],
     imageLegacyPct: T.imageLegacyPct ?? [70, 60, 40, 20],
     wastedImagePct: T.wastedImagePct ?? [10, 8, 6, 5],
-    cookieHeaderAvg: T.cookieHeaderAvg ?? [1024, 2048, 3072, 4096]
+    cookieHeaderAvg: T.cookieHeaderAvg ?? [1024, 2048, 3072, 4096],
+    // Environmental impact thresholds (French context)
+    co2_g: T.co2_g ?? [0.5, 1.0, 2.0, 4.0],
+    energy_kWh: T.energy_kWh ?? [0.0006, 0.0012, 0.0025, 0.005],
+    water_cl: T.water_cl ?? [0.05, 0.1, 0.2, 0.4],
+    dataGB: T.dataGB ?? [0.0005, 0.001, 0.002, 0.004]
   }
 
   // Normalized metric scores (0..100) BEFORE weighting
@@ -126,6 +139,26 @@ export function computeCompositeKpi(metrics, kpiCfg) {
   norms.wastedImagePct = normalizeLowerBetter(metrics.wastedImagePct, thr.wastedImagePct)
   norms.hstsMissing = (metrics.hstsMissing ? 40 : 100)
   norms.cookieHeaderAvg = normalizeLowerBetter(metrics.cookieHeaderAvg, thr.cookieHeaderAvg)
+
+  // Environmental impact scores
+  if (impacts) {
+    const impactScores = scoreEnvironmentalImpact(impacts, {
+      co2_g: thr.co2_g,
+      energy_kWh: thr.energy_kWh,
+      water_cl: thr.water_cl,
+      dataGB: thr.dataGB
+    })
+    norms.co2Impact = impactScores.co2Score
+    norms.energyImpact = impactScores.energyScore
+    norms.waterImpact = impactScores.waterScore
+    norms.dataImpact = impactScores.dataScore
+  } else {
+    // If no impacts provided, use neutral scores
+    norms.co2Impact = 60
+    norms.energyImpact = 60
+    norms.waterImpact = 60
+    norms.dataImpact = 60
+  }
 
   // Contributions BEFORE ceiling: norm * effW
   const parts = {}

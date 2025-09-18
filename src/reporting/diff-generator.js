@@ -35,7 +35,8 @@ function _metricDeltas(baseM, headM) {
     'requests','transferKB','domSize','uniqueDomains','compressedPct','minifiedPct',
     'inlineStyles','inlineScripts','cssFiles','jsFiles','resizedImages','hiddenDownloadedImages',
     'belowFoldNoLazy','staticNoCache','staticShortCache','staticWithCookies',
-    'imageLegacyPct','wastedImagePct','errors','redirects','cookieHeaderAvg'
+    'imageLegacyPct','wastedImagePct','errors','redirects','cookieHeaderAvg',
+    'co2_g','energy_kWh','water_cl','dataGB' // Add environmental metrics
   ]
   const out = {}
   keys.forEach(k => {
@@ -62,7 +63,9 @@ function _noteworthyMetrics(d, thresholds) {
     compressedPct: 5, minifiedPct: 5,
     staticNoCache: 2, staticShortCache: 2, staticWithCookies: 1,
     imageLegacyPct: 5, wastedImagePct: 5,
-    errors: 1, redirects: 1
+    errors: 1, redirects: 1,
+    // Environmental impact thresholds for diff
+    co2_g: 0.1, energy_kWh: 0.0001, water_cl: 0.01, dataGB: 0.0001
   }, thresholds||{})
   return Object.entries(d)
     .filter(([k,v]) => Math.abs(v||0) >= (thr[k] || Infinity))

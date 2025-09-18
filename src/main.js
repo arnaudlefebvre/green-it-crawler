@@ -101,15 +101,15 @@ async function run() {
       // Calculate metrics
       const metrics = calculateMetrics(responses, domInfo, net, statusCounts, cfg)
 
-      // Calculate KPI
-      const kpi = computeCompositeKpi(metrics, cfg.kpi || {})
-
       // Calculate environmental impact
       const impacts = estimateImpactsFromTransfer(net.transferBytes, {
         kWhPerGB: cfg?.impact?.kWhPerGB,
         grid_g_per_kWh: cfg?.impact?.gridIntensity_g_per_kWh,
         water_L_per_kWh: cfg?.impact?.waterIntensity_L_per_kWh
       })
+
+      // Calculate KPI with environmental impact
+      const kpi = computeCompositeKpi(metrics, cfg.kpi || {}, impacts)
 
       const meta = {
         timestamp: nowIso(),
@@ -142,7 +142,7 @@ async function run() {
       appendToCsv(csvPath, result)
 
       // Generate detailed report
-      generateDetailedReport(outDir, meta, result, kpi, domInfo, responses, cfg)
+      generateDetailedReport(outDir, meta, result, kpi, domInfo, responses, cfg, impacts)
 
       // Persist per-page network logs
       fs.writeFileSync(path.join(logsDir, `${baseName}_responses.json`), JSON.stringify({
@@ -209,7 +209,12 @@ async function run() {
           redirects: result.redirects,
           cookieHeaderAvg: result.cookieHeaderAvg, 
           fontsExternal: result.fontsExternal, 
-          hstsMissing: result.hstsMissing
+          hstsMissing: result.hstsMissing,
+          // Environmental impact metrics
+          co2_g: result.co2_g,
+          energy_kWh: result.energy_kWh,
+          water_cl: result.water_cl,
+          dataGB: result.dataGB
         },
         norms: kpi.norms || null,
         breakdown: kpi.breakdown || null,
