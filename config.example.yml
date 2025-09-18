@@ -1,0 +1,152 @@
+# Save as config.yml next to the script
+schemaVersion: 2
+
+runtime:
+  headless: true
+  ignoreHTTPSErrors: false
+  navigationTimeoutMs: 60000
+  # viewport:
+  #   width: 1366
+  #   height: 768
+  # userAgent: "Mozilla/5.0 ..."
+  
+cache:
+  minSeconds: 604800     # seuil “bon” pour les statiques (7j)
+targets:
+  - product: "MonSiteWeb"
+    login:
+      url: "https://monsiteweb.fr/connexion"
+      usernameSelector: "#login"
+      passwordSelector: "#password"
+      submitSelector: "button[type=submit]"
+      usernameEnv: "M1_USER"
+      passwordEnv: "M1_PASS"
+      # waitFor: networkidle | load | domcontentloaded
+      waitFor: "networkidle"
+    pages:
+      - name: "Accueil"
+        url: "https://monsiteweb.fr/accueil"
+        weight: 0.33
+        auth: none
+      - name: "Home"
+        url: "https://monsiteweb.fr/home"
+        weight: 0.25
+        auth: none
+      - name: "liste produits"
+        url: "https://monsiteweb.fr/produits"
+        weight: 0.20
+        auth: none
+      - name: "page produit"
+        url: "https://monsiteweb.fr/product/id/100"
+        weight: 0.15
+        auth: none
+      - name: "compte"
+        url: "https://monsiteweb.fr/compte"
+        weight: 0.07
+        auth: required
+  - product: "monapp"
+    login:
+      url: "https://monapp.fr/login"
+      usernameSelector: "#vaadinLoginUsername>input"
+      passwordSelector: "#vaadinLoginPassword>input"
+      submitSelector: ".login-form-submitbutton"
+      usernameEnv: "M2_USER"
+      passwordEnv: "M2_PASS"
+      # waitFor: networkidle | load | domcontentloaded
+      waitFor: "networkidle"
+    pages:
+      - name: "Accueil"
+        url: "https://monapp.fr/accueil"
+        weight: 0.32
+        auth: none
+      - name: "Home"
+        url: "https://monapp.fr"
+        weight: 0.51
+        auth: required
+      - name: "assistance"
+        url: "https://monapp.fr/assistance/creer-demande"
+        weight: 0.10
+        auth: required
+      - name: "paramétrage"
+        url: "https://monapp.fr/console-de-parametrage"
+        weight: 0.07
+        auth: required
+kpi:
+  weights:
+    requests: 0.3
+    transferKB: 0.2
+    domSize: 0.15
+    uniqueDomains: 0.10
+    compressedPct: 0.05
+    minifiedPct: 0.05
+    inlineStyles: 0.02
+    inlineScripts: 0.02
+    cssFiles: 0.02
+    jsFiles: 0.02
+    resizedImages: 0.01
+    hiddenDownloadedImages: 0.01
+    staticWithCookies: 0.01
+    redirects: 0.01
+    errors: 0.01
+    fontsExternal: 0.01
+    # Environmental impact (10% total) - NEW!
+    co2Impact: 0.01      # CO2 emissions (most important)
+    energyImpact: 0.01   # Energy consumption
+    waterImpact: 0.01    # Water consumption
+    dataImpact: 0.01     # Data transfer volume
+  thresholds:
+    # seuils par défaut raisonnables; ajuste à tes applis
+    requests: [30, 60, 80, 100]
+    transferKB: [1000, 5000, 6000, 7000]
+    domSize: [500, 750, 1500, 3000]
+    uniqueDomains: [2, 4, 6, 8]
+    compressedPct: [50, 70, 85, 95]   # plus haut = mieux
+    minifiedPct: [50, 70, 85, 95]     # plus haut = mieux
+    inlineStyles: [0, 0, 0, 1]
+    inlineScripts: [0, 0, 0, 1]
+    cssFiles: [3, 6, 10, 14]
+    jsFiles: [5, 10, 20, 35]
+    resizedImages: [0, 1, 3, 6]
+    hiddenDownloadedImages: [0, 1, 3, 6]
+    # staticWithCookies: [0, 1, 3, 6]
+    redirects: [0, 1, 3, 6]
+    errors: [0, 1, 2, 4]
+    imageLegacyPct: [30,50,70,90] #Plus bas = mieux
+    wastedImagePc: [5,10,20,30] #Plus bas = mieux
+    # Environmental impact thresholds (French context - low carbon grid)
+    co2_g: [0.5, 1.0, 2.0, 5.0]           # gCO2eq per page load
+    energy_kWh: [0.0006, 0.0012, 0.0025, 0.005]  # kWh per page load
+    water_cl: [0.01, 0.05, 0.1, 0.5]       # cL (centiliters) per page load
+    dataGB: [0.0005, 0.001, 0.002, 0.004] # GB transferred per page loadt
+  score_ceilings:
+    - if: "requests > 100"          # trop de requêtes
+      max_score: 75
+    - if: "transferKB > 7000"      # > 7 Mo transférés
+      max_score: 60
+    - if: "uniqueDomains > 15"     # trop de domaines
+      max_score: 70
+    - if: "domSize > 3000"         # DOM très lourd
+      max_score: 80
+    - if: "compressedPct < 90"     # compression insuffisante
+      max_score: 95
+    - if: "minifiedPct < 80"       # minification insuffisante
+      max_score: 95
+    - if: "hstsMissing"            # sécurité manquante
+      max_score: 95
+  bonuses:
+    printCss: 2           # petit bonus si feuille d'impression présente
+  penalties:
+    socialButtons: 2      # petit malus si boutons sociaux standards
+rweb:
+  # Petits garde-fous (facultatifs) si tu veux afficher un “OK/À corriger”
+  maxBelowFoldNoLazy: 0
+  maxTextNotCompressed: 0
+  maxStaticWithCookiesDomains: 1
+  minImageResponsivePct: 50
+  maxCookieHeaderAvgBytes: 2048
+impact:
+  # Modèle "swdm" basé sur le volume de données
+  kWhPerGB: 0.81                 # SWDM v4 (par défaut)
+  gridIntensity_g_per_kWh: 442   # intensité carbone moyenne mondiale
+  waterIntensity_L_per_kWh: 1.9  # ordre de grandeur WUE (eau consommée) 
+  
