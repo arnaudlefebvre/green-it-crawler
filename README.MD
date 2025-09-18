@@ -427,7 +427,7 @@ npm run kpi:modular -- --config config-test.yml
 
 ## 📄 Licence
 
-Ce projet est sous licence [Apache2](LICENSE).
+Ce projet est sous licence [Apache 2.0](LICENSE).
 
 ## 🆘 Support
 
