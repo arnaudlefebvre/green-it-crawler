@@ -1,0 +1,293 @@
+# Save as config.yml next to the script
+schemaVersion: 2
+
+runtime:
+  headless: true
+  ignoreHTTPSErrors: false
+  navigationTimeoutMs: 60000
+  # viewport:
+  #   width: 1366
+  #   height: 768
+  # userAgent: "Mozilla/5.0 ..."
+  
+cache:
+  minSeconds: 604800     # seuil “bon” pour les statiques (7j)
+targets:
+  - product: "MySanteClair Web"
+    login:
+      url: "https://services.integration.santeclair.fr/pu/public/connexion"
+      usernameSelector: "#login"
+      passwordSelector: "#password"
+      submitSelector: "button[type=submit]"
+      usernameEnv: "MP_USER"
+      passwordEnv: "MP_PASS"
+      # waitFor: networkidle | load | domcontentloaded
+      waitFor: "networkidle"
+    pages:
+      - name: "Accueil"
+        url: "https://services.integration.santeclair.fr/pu/public/accueil"
+        weight: 0.32
+        auth: none
+      - name: "Home"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair"
+        weight: 0.51
+        auth: required
+      - name: "Géoloc"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=OPTIQUE&speciality=OPTICIEN&latitude=47.218371&longitude=-1.553621"
+        weight: 0.10
+        auth: required
+      - name: "Teleconsultation"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/service-teleconsultation"
+        weight: 0.07
+        auth: required
+      - name: "analyse-symptomes"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/analyse-symptomes"
+        weight: 0.01
+        auth: required
+      - name: "trouver_un_partenaire"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire"
+        weight: 0.01
+        auth: required
+      - name: "analyse"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/devis-hospitalier/analyse"
+        weight: 0.01
+        auth: required
+      - name: "devis"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/devis"
+        weight: 0.01
+        auth: required
+      - name: "service-teleconsultation"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/service-teleconsultation"
+        weight: 0.01
+        auth: required
+      - name: "service-teleconsultation-psy"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/service-teleconsultation-psy"
+        weight: 0.01
+        auth: required
+      - name: "lentille"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/lentille"
+        weight: 0.01
+        auth: required
+      - name: "linecoaching"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/linecoaching"
+        weight: 0.01
+        auth: required
+      - name: "equilibre-bien-etre"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/equilibre-bien-etre"
+        weight: 0.01
+        auth: required
+      - name: "deuxieme-avis"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/deuxieme-avis"
+        weight: 0.01
+        auth: required
+      - name: "trouver_un_partenaire?domain=SANTE_MENTALE&widget=trouver_un_psy"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire?domain=SANTE_MENTALE&widget=trouver_un_psy"
+        weight: 0.01
+        auth: required
+      - name: "pass-optique"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/pass-optique"
+        weight: 0.01
+        auth: required
+      - name: "trouver_un_partenaire?domain=PALMARES_HOSPITALIER&widget=decouvrir_palmares_etablissements"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire?domain=PALMARES_HOSPITALIER&widget=decouvrir_palmares_etablissements"
+        weight: 0.01
+        auth: required
+      - name: "coaching-sportif"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/coaching-sportif"
+        weight: 0.01
+        auth: required
+      - name: "trouver_un_partenaire?domain=URGENCES&widget=trouver_un_service_urgence"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire?domain=URGENCES&widget=trouver_un_service_urgence"
+        weight: 0.01
+        auth: required
+      - name: "automedication"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/automedication"
+        weight: 0.01
+        auth: required
+      - name: "infirmier-a-domicile"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/infirmier-a-domicile"
+        weight: 0.01
+        auth: required
+      - name: "therasomnia"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/therasomnia"
+        weight: 0.01
+        auth: required
+      - name: "fiches-hospitalisation"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/fiches-hospitalisation"
+        weight: 0.01
+        auth: required
+      - name: "evaluer-mes-habitudes-de-vie"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/evaluer-mes-habitudes-de-vie"
+        weight: 0.01
+        auth: required
+      - name: "arret-tabac"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/arret-tabac"
+        weight: 0.01
+        auth: required
+      - name: "contact"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/contact"
+        weight: 0.01
+        auth: required
+      - name: "cgu"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/cgu"
+        weight: 0.01
+        auth: required
+      - name: "mentions"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/mentions"
+        weight: 0.01
+        auth: required
+      - name: "geoloc optique"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=OPTIQUE&speciality=OPTICIEN&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc audio"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=AUDITION&speciality=AUDIOPROTHESISTE&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc medecine douce chiro"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=MEDECINE_DOUCE&speciality=CHIROPRACTEUR&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc medecine douce osteo"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=MEDECINE_DOUCE&speciality=OSTEOPATHE&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc med ville"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=GENERALISTE&speciality=CARDIO&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc psy"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=SANTE_MENTALE&speciality=PSYCHOLOGUE&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc psychiatre"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=SANTE_MENTALE&speciality=PSYCHIATRE&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc hospi"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=PALMARES_HOSPITALIER&speciality=45&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc urgence"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=URGENCES&speciality=PSY&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "geoloc sport"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/trouver_un_partenaire/resultats?domain=COACHING_SPORTIF&speciality=54&latitude=47.218371&longitude=-1.553621"
+        weight: 0.01
+        auth: required
+      - name: "analyses-devis"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/mon-compte/analyses-devis"
+        weight: 0.01
+        auth: required
+      - name: "prises-en-charge"
+        url: "https://services.integration.santeclair.fr/pu/mysanteclair/mon-compte/prises-en-charge"
+        weight: 0.01
+        auth: required
+  - product: "Santeclair Solution"
+    login:
+      url: "https://solutions.recette.santeclair.fr/login"
+      usernameSelector: "#vaadinLoginUsername>input"
+      passwordSelector: "#vaadinLoginPassword>input"
+      submitSelector: ".login-form-submitbutton"
+      usernameEnv: "STC_USER"
+      passwordEnv: "STC_PASS"
+      # waitFor: networkidle | load | domcontentloaded
+      waitFor: "networkidle"
+    pages:
+      - name: "Accueil"
+        url: "https://solutions.recette.santeclair.fr/accueilValinor"
+        weight: 0.32
+        auth: none
+      - name: "Home"
+        url: "https://solutions.recette.santeclair.fr"
+        weight: 0.51
+        auth: required
+      - name: "Créer ticket"
+        url: "https://solutions.recette.santeclair.fr/assistance-santeclair/creer-demande-dossier"
+        weight: 0.10
+        auth: required
+      - name: "Créer FS"
+        url: "https://solutions.recette.santeclair.fr/console-de-parametrage/creer"
+        weight: 0.07
+        auth: required
+  - product: "Santeclair.fr "
+    pages:
+      - name: "Home"
+        url: "https://www.santeclair.fr/fr/"
+        weight: 0.5
+      - name: "Vie privée"
+        url: "https://www.santeclair.fr/fr/vie-privee"
+        weight: 0.25
+      - name: "Qui"
+        url: "https://www.santeclair.fr/fr/qui-sommes-nous"
+        weight: 0.25
+kpi:
+  weights:
+    requests: 0.3
+    transferKB: 0.2
+    domSize: 0.15
+    uniqueDomains: 0.10
+    compressedPct: 0.05
+    minifiedPct: 0.05
+    inlineStyles: 0.02
+    inlineScripts: 0.02
+    cssFiles: 0.02
+    jsFiles: 0.02
+    resizedImages: 0.01
+    hiddenDownloadedImages: 0.01
+    staticWithCookies: 0.01
+    redirects: 0.01
+    errors: 0.01
+    fontsExternal: 0.01
+  thresholds:
+    # seuils par défaut raisonnables; ajuste à tes applis
+    requests: [30, 60, 80, 100]
+    transferKB: [1000, 5000, 6000, 7000]
+    domSize: [500, 750, 1500, 3000]
+    uniqueDomains: [2, 4, 6, 8]
+    compressedPct: [50, 70, 85, 95]   # plus haut = mieux
+    minifiedPct: [50, 70, 85, 95]     # plus haut = mieux
+    inlineStyles: [0, 0, 0, 1]
+    inlineScripts: [0, 0, 0, 1]
+    cssFiles: [3, 6, 10, 14]
+    jsFiles: [5, 10, 20, 35]
+    resizedImages: [0, 1, 3, 6]
+    hiddenDownloadedImages: [0, 1, 3, 6]
+    # staticWithCookies: [0, 1, 3, 6]
+    redirects: [0, 1, 3, 6]
+    errors: [0, 1, 2, 4]
+    imageLegacyPct: [90,70,50,30] #Plus bas = mieux
+    wastedImagePct: [30,20,10,5] #Plus bas = mieux
+  score_ceilings:
+    - if: "requests > 100"          # trop de requêtes
+      max_score: 75
+    - if: "transferKB > 7000"      # > 7 Mo transférés
+      max_score: 60
+    - if: "uniqueDomains > 15"     # trop de domaines
+      max_score: 70
+    - if: "domSize > 3000"         # DOM très lourd
+      max_score: 80
+    - if: "compressedPct < 90"     # compression insuffisante
+      max_score: 95
+    - if: "minifiedPct < 80"       # minification insuffisante
+      max_score: 95
+    - if: "hstsMissing"            # sécurité manquante
+      max_score: 95
+  bonuses:
+    printCss: 2           # petit bonus si feuille d'impression présente
+  penalties:
+    socialButtons: 2      # petit malus si boutons sociaux standards
+rweb:
+  # Petits garde-fous (facultatifs) si tu veux afficher un “OK/À corriger”
+  maxBelowFoldNoLazy: 0
+  maxTextNotCompressed: 0
+  maxStaticWithCookiesDomains: 1
+  minImageResponsivePct: 50
+  maxCookieHeaderAvgBytes: 2048
+impact:
+  # Modèle "swdm" basé sur le volume de données
+  kWhPerGB: 0.81                 # SWDM v4 (par défaut)
+  gridIntensity_g_per_kWh: 442   # intensité carbone moyenne mondiale
+  waterIntensity_L_per_kWh: 1.9  # ordre de grandeur WUE (eau consommée) 
+  
