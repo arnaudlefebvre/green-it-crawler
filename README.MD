@@ -286,25 +286,25 @@ Chaque produit peut avoir sa propre authentification :
 
 ```yaml
 targets:
-- product: "MySanteClair Web"
+- product: "MonSiteWeb"
   login:
-    storageStatePath: "out/auth/mysanteclair_storageState.json"
+    storageStatePath: "out/auth/MonSiteWeb_storageState.json"
   pages:
   - name: "Dashboard"
-    url: "https://services.santeclair.fr/dashboard"
+    url: "https://MonSiteWeb.fr/dashboard"
     auth: "required"
 
-- product: "Santeclair Solution"  
+- product: "monsite2"  
   login:
-    url: "https://solution.santeclair.fr/login"
-    usernameEnv: "STC_USER"
-    passwordEnv: "STC_PASS"
+    url: "https://monsite2.fr/login"
+    usernameEnv: "M2_USER"
+    passwordEnv: "M2_PASS"
     usernameSelector: "#email"
     passwordSelector: "#password"
     submitSelector: ".btn-login"
   pages:
   - name: "Admin"
-    url: "https://solution.santeclair.fr/admin"
+    url: "https://monsite2.fr/admin"
     requiresAuth: true
 ```
 
