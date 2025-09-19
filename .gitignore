@@ -143,3 +143,5 @@ pw-profile/
 secrets.txt
 .env
 config.yml
+.CRUSH.md
+.AGENTS.md
